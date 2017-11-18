@@ -1,5 +1,22 @@
 package com.homvee.db.dao.impl;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.sql.DataSource;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.alibaba.druid.util.StringUtils;
 import com.google.common.collect.Lists;
 import com.google.protobuf.Descriptors;
@@ -7,17 +24,13 @@ import com.google.protobuf.Message;
 import com.homvee.db.annotations.TableName;
 import com.homvee.db.dao.Dao;
 
-import javax.sql.DataSource;
-import java.sql.*;
-import java.util.*;
-
 public abstract class BaseDaoImpl implements Dao {
-
+	private static Logger logger = LogManager.getLogger(BaseDaoImpl.class);
     protected  abstract DataSource getDataSource() throws Exception;
     protected  abstract String getPrimaryKeyName(String tableName) ;
     protected static  String getTableName(Message message){
         if(message == null){
-            //TODO 日志
+        	logger.info("message is null!");
             return  null;
         }
         String name = null;
@@ -74,8 +87,7 @@ public abstract class BaseDaoImpl implements Dao {
             setParameters(statement , params);
             return  statement.executeUpdate();
         } catch (Exception e) {
-            //TODO
-            e.printStackTrace();
+            logger.error(e);
         }finally {
            close(connection  ,statement , null);
         }
@@ -114,8 +126,7 @@ public abstract class BaseDaoImpl implements Dao {
             return retData;
 
         } catch (Exception e) {
-            //TODO
-            e.printStackTrace();
+        	logger.error(e);
         }finally {
            close(connection  ,statement , resultSet);
         }
@@ -131,16 +142,14 @@ public abstract class BaseDaoImpl implements Dao {
             try {
                 resultSet.close();
             } catch (SQLException e) {
-                //TODO 日志
-                e.printStackTrace();
+            	logger.error(e);
             }
         }
         if(statement != null){
             try {
                 statement.close();
             } catch (SQLException e) {
-                //TODO 日志
-                e.printStackTrace();
+            	logger.error(e);
             }
         }
         if(connection != null){
@@ -148,8 +157,7 @@ public abstract class BaseDaoImpl implements Dao {
 
                 connection.close();
             } catch (SQLException e) {
-                //TODO 日志
-                e.printStackTrace();
+            	logger.error(e);
             }
         }
     }
@@ -164,12 +172,12 @@ public abstract class BaseDaoImpl implements Dao {
     }
     protected boolean checkMsg(Message msg){
         if (msg == null){
-            //TODO 日志
+        	logger.info("message is null");
             return false;
         }
         Map<Descriptors.FieldDescriptor, Object> filedMap = msg.getAllFields();
         if(filedMap == null || filedMap.size() < 1){
-            //TODO 日志
+        	logger.info("filedMap is null");
             return false;
         }
 
