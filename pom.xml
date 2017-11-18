@@ -46,9 +46,26 @@
         <artifactId>mysql-connector-java</artifactId>
         <version>${mysql.connector.version}</version>
       </dependency>
+      
+      <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-all</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+            <version>2.4.2</version>
+        </dependency>
 
       <!--GRPC-->
-      <dependency>
+      <!-- <dependency>
         <groupId>io.grpc</groupId>
         <artifactId>grpc-core</artifactId>
         <version>${grpc.version}</version>
@@ -67,7 +84,7 @@
         <groupId>io.grpc</groupId>
         <artifactId>grpc-stub</artifactId>
         <version>${grpc.version}</version>
-      </dependency>
+      </dependency> -->
 
 
       <!-- google sets,maps dependencies-->
@@ -132,11 +149,17 @@
         <filtering>true</filtering>
       </resource>
     </resources>
+   	<extensions>
+           <extension>
+               <groupId>kr.motd.maven</groupId>
+               <artifactId>os-maven-plugin</artifactId>
+               <version>1.4.1.Final</version>
+           </extension>
+    </extensions>
     <!-- 插件管理 -->
-    <pluginManagement>
       <plugins>
         <!--编译插件  -->
-        <plugin>
+        <!-- <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${compiler.plugin.version}</version>
@@ -145,26 +168,52 @@
             <target>${jdk.version}</target>
             <encoding>${maven.compiler.encoding}</encoding>
           </configuration>
+        </plugin> -->
+		<!-- protobuf -->
+        <plugin>
+            <groupId>org.xolstice.maven.plugins</groupId>
+            <artifactId>protobuf-maven-plugin</artifactId>
+            <version>0.5.0</version>
+            <configuration>
+                <protocArtifact>com.google.protobuf:protoc:3.0.0-beta-2:exe:${os.detected.classifier}</protocArtifact>
+                <pluginId>grpc-java</pluginId>
+                <pluginArtifact>io.grpc:protoc-gen-grpc-java:0.14.0:exe:${os.detected.classifier}</pluginArtifact>
+                <protoSourceRoot>src/main/resources/proto</protoSourceRoot>
+            </configuration>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>compile</goal>
+                        <goal>compile-custom</goal>
+                    </goals>
+                </execution>
+            </executions>
         </plugin>
 
-
         <!-- 发布插件 -->
-        <plugin>
+        <!-- <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
           <version>${deploy.plugin.version}</version>
-        </plugin>
+        </plugin> -->
         <!-- 单元测试插件 -->
-        <plugin>
+        <!-- <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${surefire.plugin.version}</version>
           <configuration>
             <skipTests>true</skipTests>
           </configuration>
-        </plugin>
+        </plugin> -->
+        <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
       </plugins>
-    </pluginManagement>
 
   </build>
 </project>

@@ -1,0 +1,31 @@
+syntax = "proto3";  
+package com.homvee.grpc;  
+option java_package = "com.homvee.grpc.service.msgs";  
+message Teacher {
+	int64 id=32;
+	string name = 1;
+	int32 age =9;
+	float salary=10;
+	enum Gender{
+		UNKOWN = 0;
+		MALE = 1;
+		FEMALE = 2;
+	}
+
+    repeated Student students = 2;
+    map<string, Course> courseTcher = 3;
+}
+
+message Student {
+	int64 id=32;
+    string name = 1;
+    Course courses = 2;
+    string sports = 3;
+}
+
+
+message Course {
+	int64 id=32;
+    string name = 1;
+    int32 score=30;
+}
