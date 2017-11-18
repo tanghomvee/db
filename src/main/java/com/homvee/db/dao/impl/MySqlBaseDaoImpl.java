@@ -1,14 +1,5 @@
 package com.homvee.db.dao.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.alibaba.druid.util.StringUtils;
 import com.google.common.collect.Lists;
 import com.google.protobuf.DescriptorProtos;
@@ -17,8 +8,13 @@ import com.google.protobuf.Message;
 import com.homvee.db.ds.DataSourceUtil;
 import com.homvee.db.enums.DBType;
 
+import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public  class MySqlBaseDaoImpl extends BaseDaoImpl {
-	private static Logger logger = LogManager.getLogger(MySqlBaseDaoImpl.class);
+
 
     @Override
    public DataSource getDataSource() throws Exception {
@@ -49,7 +45,7 @@ public  class MySqlBaseDaoImpl extends BaseDaoImpl {
             Descriptors.FieldDescriptor.Type type = descriptor.getType();
             if(DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE.equals(type) ||
                     descriptor.isRepeated() || descriptor.isMapField()){
-            	logger.info("未知类型");
+                LOGGER.info("data-Type={} not support update" , type);
                 continue;
             }
             Object colVal = filedMap.get(descriptor);
@@ -62,7 +58,7 @@ public  class MySqlBaseDaoImpl extends BaseDaoImpl {
             params.add(colVal);
         }
         if(StringUtils.isEmpty(keyName) || keyVal == null){
-        	logger.info("keyName or keyVal is null");
+            LOGGER.info("primary Key-Name or Key-Value 不存在");
             return -1;
         }
         sql = sql.deleteCharAt(sql.lastIndexOf(","));
@@ -74,10 +70,9 @@ public  class MySqlBaseDaoImpl extends BaseDaoImpl {
 
     public int save(Message message) {
         if (!checkMsg(message)){
-            //TODO 日志
+            LOGGER.info("message is null");
             return -1;
         }
-
         Map<Descriptors.FieldDescriptor, Object> filedMap = message.getAllFields();
         String tableName = getTableName(message);
         StringBuffer sql = new StringBuffer("insert into " + tableName );
@@ -88,7 +83,7 @@ public  class MySqlBaseDaoImpl extends BaseDaoImpl {
             Descriptors.FieldDescriptor.Type type = descriptor.getType();
             if(DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE.equals(type) ||
                    descriptor.isRepeated() || descriptor.isMapField()){
-                //TODO 日志
+                LOGGER.info("data-Type={} not support save" , type);
                 continue;
             }
             Object colVal = filedMap.get(descriptor);
