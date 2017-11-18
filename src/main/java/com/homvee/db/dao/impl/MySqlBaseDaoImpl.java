@@ -70,7 +70,7 @@ public  class MySqlBaseDaoImpl extends BaseDaoImpl {
 
     public int save(Message message) {
         if (!checkMsg(message)){
-            LOGGER.info("message is null");
+            LOGGER.info("message is error");
             return -1;
         }
         Map<Descriptors.FieldDescriptor, Object> filedMap = message.getAllFields();
@@ -100,6 +100,8 @@ public  class MySqlBaseDaoImpl extends BaseDaoImpl {
         System.out.println(sql);
         return super.save(sql.toString() , params);
     }
+
+
 
 
     public List< Message> query(String sql, List<?> params, Message.Builder builder) {
@@ -135,5 +137,34 @@ public  class MySqlBaseDaoImpl extends BaseDaoImpl {
             retData.add(builder.build());
         }
         return retData;
+    }
+
+    public List< Message> query(Message queryMsg,  Message.Builder builder){
+        List<Message> retData = Lists.newArrayList();
+        if (!checkMsg(queryMsg)){
+            LOGGER.info("query message is error");
+            return retData;
+        }
+        String tableName = getTableName(builder.buildPartial());
+        List<Object> params = Lists.newArrayList();
+        StringBuffer sql = new StringBuffer("select * from ");
+        sql.append(tableName).append(" where 1=1 ");
+        Map<Descriptors.FieldDescriptor, Object> filedMap = queryMsg.getAllFields();
+        for (Descriptors.FieldDescriptor descriptor : filedMap.keySet()){
+            Descriptors.FieldDescriptor.Type type = descriptor.getType();
+            if(DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE.equals(type) || descriptor.isRepeated() || descriptor.isMapField()){
+                    continue;
+            }
+            Object val = filedMap.get(descriptor);
+            if (val == null){
+                continue;
+            }
+            String colName = descriptor.getName();
+
+            sql.append(" AND ").append(colName + "= ?");
+            params.add(val);
+        }
+
+        return query(sql.toString() , params ,builder);
     }
 }

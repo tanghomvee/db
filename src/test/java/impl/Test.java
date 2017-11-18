@@ -17,7 +17,9 @@ public class Test {
         subScriptReq.setUserName("username");
 //        mySqlBaseDao.save(subScriptReq.build());
 
-       List<Message> messages = mySqlBaseDao.query("select * from SubScriptReq where userName = ?" , Lists.newArrayList("userName") , SubScriptReqProto.SubScriptReq.newBuilder());
+        List<Message> messages = mySqlBaseDao.query("select * from SubScriptReq where userName = ?" , Lists.newArrayList("userName") , SubScriptReqProto.SubScriptReq.newBuilder());
+        System.out.println(messages.size());
+        messages = mySqlBaseDao.query(subScriptReq.build(),  SubScriptReqProto.SubScriptReq.newBuilder());
 
         System.out.println(messages.size());
     }
