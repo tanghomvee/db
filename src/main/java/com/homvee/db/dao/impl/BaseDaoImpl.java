@@ -25,12 +25,17 @@ import com.homvee.db.annotations.TableName;
 import com.homvee.db.dao.Dao;
 
 public abstract class BaseDaoImpl implements Dao {
-	private static Logger logger = LogManager.getLogger(BaseDaoImpl.class);
+	protected static Logger LOGGER = null;
+
+    public BaseDaoImpl() {
+        LOGGER = LogManager.getLogger(BaseDaoImpl.class);
+    }
+
     protected  abstract DataSource getDataSource() throws Exception;
     protected  abstract String getPrimaryKeyName(String tableName) ;
     protected static  String getTableName(Message message){
         if(message == null){
-        	logger.info("message is null!");
+            LOGGER.info("message is null!");
             return  null;
         }
         String name = null;
@@ -87,7 +92,7 @@ public abstract class BaseDaoImpl implements Dao {
             setParameters(statement , params);
             return  statement.executeUpdate();
         } catch (Exception e) {
-            logger.error(e);
+            LOGGER.error("sql={},params={} 执行异常", sql , params, e);
         }finally {
            close(connection  ,statement , null);
         }
@@ -126,7 +131,7 @@ public abstract class BaseDaoImpl implements Dao {
             return retData;
 
         } catch (Exception e) {
-        	logger.error(e);
+            LOGGER.error("sql={},params={} 执行异常", sql , params, e);
         }finally {
            close(connection  ,statement , resultSet);
         }
@@ -142,14 +147,14 @@ public abstract class BaseDaoImpl implements Dao {
             try {
                 resultSet.close();
             } catch (SQLException e) {
-            	logger.error(e);
+                LOGGER.error("执行resultSet.close异常", e);
             }
         }
         if(statement != null){
             try {
                 statement.close();
             } catch (SQLException e) {
-            	logger.error(e);
+                LOGGER.error("执行statement.close异常", e);
             }
         }
         if(connection != null){
@@ -157,7 +162,7 @@ public abstract class BaseDaoImpl implements Dao {
 
                 connection.close();
             } catch (SQLException e) {
-            	logger.error(e);
+                LOGGER.error("执行connection.close异常", e);
             }
         }
     }
@@ -172,12 +177,12 @@ public abstract class BaseDaoImpl implements Dao {
     }
     protected boolean checkMsg(Message msg){
         if (msg == null){
-        	logger.info("message is null");
+            LOGGER.info("message is null");
             return false;
         }
         Map<Descriptors.FieldDescriptor, Object> filedMap = msg.getAllFields();
         if(filedMap == null || filedMap.size() < 1){
-        	logger.info("filedMap is null");
+            LOGGER.info("filedMap is null");
             return false;
         }
 
