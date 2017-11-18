@@ -1,10 +1,10 @@
 package impl;
 
+import java.util.List;
+
 import com.google.common.collect.Lists;
 import com.google.protobuf.Message;
 import com.homvee.db.dao.impl.MySqlBaseDaoImpl;
-
-import java.util.List;
 
 public class Test {
     public static void main(String[] args) throws Exception {

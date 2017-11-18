@@ -2,9 +2,11 @@ package com.homvee.db.dao.impl;
 
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 
-import com.google.protobuf.Message;
 import com.homvee.grpc.service.msgs.GRPCMsg;
 
 public class MySqlBaseDaoImplTest {
@@ -30,8 +32,11 @@ public class MySqlBaseDaoImplTest {
 
 	@Test
 	public void testUpdateMessage() {
-		Message message = null;
-		mySqlBaseDaoImpl.update(message);
+		GRPCMsg.Teacher.Builder teacher = GRPCMsg.Teacher.newBuilder();
+		teacher.setId(1);
+		teacher.setAge(15);
+		teacher.setName("THWqs");
+		mySqlBaseDaoImpl.update(teacher.build());
 	}
 
 	@Test
@@ -39,7 +44,7 @@ public class MySqlBaseDaoImplTest {
 		GRPCMsg.Teacher.Builder teacher = GRPCMsg.Teacher.newBuilder();
 		teacher.setAge(30);
 		teacher.setName("THW");
-		teacher.setSalary(10);
+		teacher.setSalary(50);
 		mySqlBaseDaoImpl.save(teacher.build());
 	}
 
@@ -50,7 +55,11 @@ public class MySqlBaseDaoImplTest {
 
 	@Test
 	public void testQueryStringListOfQClassOfQextendsMessage() {
-		fail("Not yet implemented");
+		GRPCMsg.Teacher.Builder teacher = GRPCMsg.Teacher.newBuilder();
+		teacher.setAge(30);
+		teacher.setName("THW");
+		GRPCMsg.Teacher.Builder teacher1 = GRPCMsg.Teacher.newBuilder();
+		System.out.println(mySqlBaseDaoImpl.query(teacher.build(), teacher1));
 	}
 
 	@Test
@@ -81,7 +90,10 @@ public class MySqlBaseDaoImplTest {
 
 	@Test
 	public void testCountStringListOfQ() {
-		fail("Not yet implemented");
+		String sql = "select count(*) from teacher where age = ?";
+		List<Object> parm  = new ArrayList<Object>();
+		parm.add(15);
+		System.out.println(mySqlBaseDaoImpl.count(sql,parm));
 	}
 
 	@Test
@@ -96,17 +108,11 @@ public class MySqlBaseDaoImplTest {
 
 	@Test
 	public void testQueryStringListOfQ() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testClose() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testSetParameters() {
-		fail("Not yet implemented");
+		GRPCMsg.Teacher.Builder teacher = GRPCMsg.Teacher.newBuilder();
+		String sql = "select * from teacher where age = ?";
+		List<Object> parm  = new ArrayList<Object>();
+		parm.add(15);
+		System.out.println(mySqlBaseDaoImpl.query(sql,parm, teacher));
 	}
 
 }

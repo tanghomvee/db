@@ -119,14 +119,14 @@ public abstract class BaseDaoImpl implements Dao {
      * @param params sql参数
      * @return 查询的行数，-1 表示错误
      */
-    public int count(String sql , List<?> params){
+    public long count(String sql , List<?> params){
         List<Map<String , Object>> data = this.query(sql , params);
         if(data == null || data.size() < 1){
             return  0;
         }
         Map<String , Object> objectMap = data.get(0);
         List<String> keys = new ArrayList<String>(objectMap.keySet());
-        return  (Integer) objectMap.get(keys.get(0));
+        return  (Long) objectMap.get(keys.get(0));
     }
     
     /**
@@ -135,7 +135,7 @@ public abstract class BaseDaoImpl implements Dao {
      * @param params sql参数
      * @return 查询的行数，-1 表示错误
      */
-    public int count(String sql , Object ... params){
+    public long count(String sql , Object ... params){
         return  this.count(sql , Arrays.asList(params));
     }
 
