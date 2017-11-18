@@ -25,7 +25,7 @@ public  class MySqlBaseDaoImpl extends BaseDaoImpl {
     public String getPrimaryKeyName(String tableName) {
         StringBuffer sql = new StringBuffer("SELECT a.TABLE_SCHEMA, a.TABLE_NAME,a.COLUMN_NAME,a.CONSTRAINT_NAME, a.REFERENCED_TABLE_NAME,a.REFERENCED_COLUMN_NAME FROM " +
                 "information_schema.KEY_COLUMN_USAGE a " +
-                "WHERE a.TABLE_NAME =?  AND a.TABLE_SCHEMA NOT IN ('sys' ,'mysql' , 'information_schema') AND CONSTRAINT_NAME='PRIMARY';");
+                "WHERE a.TABLE_NAME =?  AND a.TABLE_SCHEMA NOT IN ('sys' ,'mysql' , 'information_schema') AND CONSTRAINT_NAME='PRIMARY'");
         List<Map<String , Object>> data = super.query(sql.toString() , Lists.newArrayList(tableName));
         return (String) data.get(0).get("COLUMN_NAME");
     }
@@ -79,7 +79,7 @@ public  class MySqlBaseDaoImpl extends BaseDaoImpl {
         String tableName = getTableName(message);
         StringBuffer sql = new StringBuffer("insert into " + tableName );
         StringBuffer clos = new StringBuffer("(");
-        StringBuffer cloVals = new StringBuffer("(");
+        StringBuffer cloVals = new StringBuffer(" values (");
         List<Object> params = Lists.newArrayList();
         for (Descriptors.FieldDescriptor descriptor : filedMap.keySet()){
             Descriptors.FieldDescriptor.Type type = descriptor.getType();
@@ -96,27 +96,27 @@ public  class MySqlBaseDaoImpl extends BaseDaoImpl {
         }
         clos = clos.deleteCharAt(clos.lastIndexOf(","));
         clos.append(")");
-        cloVals = cloVals.deleteCharAt(clos.lastIndexOf(","));
+        cloVals = cloVals.deleteCharAt(cloVals.lastIndexOf(","));
         cloVals.append(")");
         sql.append(clos).append(cloVals);
+        System.out.println(sql);
         return super.save(sql.toString() , params);
     }
 
 
-    public List< Message> query(String sql, List<?> params, Message msg) {
+    public List< Message> query(String sql, List<?> params, Message.Builder builder) {
         List<Map<String,Object>> data = query(sql , params);
         if(data == null || data.size() < 1){
             return null;
         }
         List<Message> retData = Lists.newArrayList();
 
-        String tableName = getTableName(msg);
+        String tableName = getTableName(builder.buildPartial());
         String keyName = getPrimaryKeyName(tableName);
 
         for (Map<String , Object> tmpMap : data){
-            Message.Builder tmpMsg = msg.newBuilderForType();
-            Map<Descriptors.FieldDescriptor, Object> filedMap = tmpMsg.getAllFields();
-            for (Descriptors.FieldDescriptor descriptor : filedMap.keySet()){
+            List<Descriptors.FieldDescriptor> fieldDescriptors =  builder.getDescriptorForType().getFields();
+            for (Descriptors.FieldDescriptor descriptor : fieldDescriptors){
                 Descriptors.FieldDescriptor.Type type = descriptor.getType();
                 String colName = descriptor.getName();
                 Object val = tmpMap.get(colName);
@@ -131,10 +131,10 @@ public  class MySqlBaseDaoImpl extends BaseDaoImpl {
                         continue;
                     }
                 }
-                tmpMsg.setField(descriptor , val);
+                builder.setField(descriptor , val);
 
             }
-            retData.add(tmpMsg.build());
+            retData.add(builder.build());
         }
         return retData;
     }
