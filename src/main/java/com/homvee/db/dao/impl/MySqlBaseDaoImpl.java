@@ -1,5 +1,11 @@
 package com.homvee.db.dao.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.sql.DataSource;
+
 import com.alibaba.druid.util.StringUtils;
 import com.google.common.collect.Lists;
 import com.google.protobuf.DescriptorProtos;
@@ -8,11 +14,11 @@ import com.google.protobuf.Message;
 import com.homvee.db.ds.DataSourceUtil;
 import com.homvee.db.enums.DBType;
 
-import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+/**
+ * mysql dao 实现
+ * @author chensr
+ *
+ */
 public  class MySqlBaseDaoImpl extends BaseDaoImpl {
 
 
@@ -30,6 +36,10 @@ public  class MySqlBaseDaoImpl extends BaseDaoImpl {
         return (String) data.get(0).get("COLUMN_NAME");
     }
 
+    /**
+     * 更新数据
+     * @param message 保存对象
+     */
     public int update(Message message) {
         if (!checkMsg(message)){
             return -1;
@@ -68,6 +78,10 @@ public  class MySqlBaseDaoImpl extends BaseDaoImpl {
         return super.update(sql.toString() , params);
     }
 
+    /**
+     * 保存数据
+     * @param message 保存对象
+     */
     public int save(Message message) {
         if (!checkMsg(message)){
             LOGGER.info("message is error");
@@ -103,7 +117,12 @@ public  class MySqlBaseDaoImpl extends BaseDaoImpl {
 
 
 
-
+    /**
+     * 通过sql查询
+     * @param sql 查询语句
+     * @param params 查询参数
+     * @param builder Message
+     */
     public List< Message> query(String sql, List<?> params, Message.Builder builder) {
         List<Map<String,Object>> data = query(sql , params);
         if(data == null || data.size() < 1){
@@ -139,6 +158,11 @@ public  class MySqlBaseDaoImpl extends BaseDaoImpl {
         return retData;
     }
 
+    /**
+     * 通过message查询
+     * @param queryMsg
+     * @param builder
+     */
     public List< Message> query(Message queryMsg,  Message.Builder builder){
         List<Message> retData = Lists.newArrayList();
         if (!checkMsg(queryMsg)){

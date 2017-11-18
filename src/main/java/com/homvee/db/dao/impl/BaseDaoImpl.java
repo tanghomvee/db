@@ -24,6 +24,11 @@ import com.google.protobuf.Message;
 import com.homvee.db.annotations.TableName;
 import com.homvee.db.dao.Dao;
 
+/**
+ * Dao 基础类 主要实现一些基本的查询 修改 新增方法
+ * @author chensr
+ *
+ */
 public abstract class BaseDaoImpl implements Dao {
 	protected static Logger LOGGER = null;
 
@@ -31,8 +36,25 @@ public abstract class BaseDaoImpl implements Dao {
         LOGGER = LogManager.getLogger(BaseDaoImpl.class);
     }
 
+    /**
+     * 获取数据源
+     * @return DataSource 数据源
+     * @throws Exception
+     */
     protected  abstract DataSource getDataSource() throws Exception;
+    
+    /**
+     * 通过表面获取主键
+     * @param tableName
+     * @return
+     */
     protected  abstract String getPrimaryKeyName(String tableName) ;
+    
+    /**
+     * 获取表名
+     * @param message
+     * @return 表名
+     */
     protected static  String getTableName(Message message){
         if(message == null){
             LOGGER.info("message is null!");
@@ -51,18 +73,52 @@ public abstract class BaseDaoImpl implements Dao {
     }
 
 
+    /**
+     * 修改
+     * @param sql
+     * @param params sql参数
+     * @return 修改的行数，-1 表示错误
+     */
     public int update(String sql , Object ... params){
         return  this.update(sql , Arrays.asList(params));
     }
+    
+    /**
+     * 修改
+     * @param sql
+     * @param params sql参数
+     * @return 修改的行数，-1 表示错误
+     */
     public int update(String sql , List<?> params){
         return  this.saveOrUpdate(sql , params);
     }
+    
+    /**
+     *  新增
+     * @param sql
+     * @param params sql参数
+     * @return 新增的行数，-1 表示错误
+     */
     public int save(String sql , List<?> params){
         return  this.saveOrUpdate(sql , params);
     }
+    
+    /**
+     * 新增
+     * @param sql
+     * @param params sql参数
+     * @return 新增的行数，-1 表示错误
+     */
     public int save(String sql , Object ... params){
         return  this.save(sql , Arrays.asList(params));
     }
+    
+    /**
+     * 统计记录数
+     * @param sql
+     * @param params sql参数
+     * @return 查询的行数，-1 表示错误
+     */
     public int count(String sql , List<?> params){
         List<Map<String , Object>> data = this.query(sql , params);
         if(data == null || data.size() < 1){
@@ -72,6 +128,13 @@ public abstract class BaseDaoImpl implements Dao {
         List<String> keys = new ArrayList<String>(objectMap.keySet());
         return  (Integer) objectMap.get(keys.get(0));
     }
+    
+    /**
+     * 统计记录数
+     * @param sql
+     * @param params sql参数
+     * @return 查询的行数，-1 表示错误
+     */
     public int count(String sql , Object ... params){
         return  this.count(sql , Arrays.asList(params));
     }
@@ -141,7 +204,12 @@ public abstract class BaseDaoImpl implements Dao {
 
 
 
-
+    /**
+     * 关闭数据连接
+     * @param connection
+     * @param statement
+     * @param resultSet
+     */
     public void close(Connection connection , Statement  statement , ResultSet resultSet){
         if(resultSet != null){
             try {
@@ -167,6 +235,12 @@ public abstract class BaseDaoImpl implements Dao {
         }
     }
 
+    /**
+     * 设置参数
+     * @param statement 
+     * @param params params
+     * @throws SQLException
+     */
     protected void setParameters(PreparedStatement statement , List<?> params) throws SQLException {
         if(params == null || params.size() < 1){
             return;
@@ -175,6 +249,12 @@ public abstract class BaseDaoImpl implements Dao {
             statement.setObject(index++, params.get(i));
         }
     }
+    
+    /**
+     * 检查message 对象合法性
+     * @param msg 
+     * @return true 合法  false 不合法
+     */
     protected boolean checkMsg(Message msg){
         if (msg == null){
             LOGGER.info("message is null");

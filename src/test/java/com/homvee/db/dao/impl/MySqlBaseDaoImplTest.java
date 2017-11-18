@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 import com.google.protobuf.Message;
+import com.homvee.grpc.service.msgs.GRPCMsg;
 
 public class MySqlBaseDaoImplTest {
 	MySqlBaseDaoImpl mySqlBaseDaoImpl  = new MySqlBaseDaoImpl();
@@ -31,12 +32,15 @@ public class MySqlBaseDaoImplTest {
 	public void testUpdateMessage() {
 		Message message = null;
 		mySqlBaseDaoImpl.update(message);
-		fail("Not yet implemented");
 	}
 
 	@Test
 	public void testSaveMessage() {
-		fail("Not yet implemented");
+		GRPCMsg.Teacher.Builder teacher = GRPCMsg.Teacher.newBuilder();
+		teacher.setAge(30);
+		teacher.setName("THW");
+		teacher.setSalary(10);
+		mySqlBaseDaoImpl.save(teacher.build());
 	}
 
 	@Test
@@ -51,7 +55,8 @@ public class MySqlBaseDaoImplTest {
 
 	@Test
 	public void testGetTableName() {
-		fail("Not yet implemented");
+		GRPCMsg.Teacher.Builder teacher = GRPCMsg.Teacher.newBuilder();
+		System.out.println(mySqlBaseDaoImpl.getTableName(teacher.build()));
 	}
 
 	@Test
