@@ -17,5 +17,5 @@ public interface Dao {
 
     int update(Message message);
     int save(Message message);
-//    List<Message> query(String sql , List<?> params , Message retClazz);
+    List<Message> query(String sql , List<?> params , Message.Builder builder);
 }
