@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.Message;
+import com.homvee.db.MessageUtil;
 import com.homvee.db.ds.DataSourceUtil;
 import com.homvee.db.enums.DBType;
 
@@ -35,6 +36,52 @@ public  class MySqlBaseDaoImpl extends BaseDaoImpl {
         List<Map<String , Object>> data = super.query(sql.toString() , Lists.newArrayList(tableName));
         return (String) data.get(0).get("COLUMN_NAME");
     }
+    
+    /**
+     * 根据主键查询数据
+     * @param message
+     * @return
+     */
+    public Message getByPrimaryKey(Message message) {
+        String tableName = getTableName(message);
+        String keyName = getPrimaryKeyName(tableName);
+        StringBuffer sql = new StringBuffer("select * from " + tableName + " where "+keyName+" = ?");
+        List<Object> params = new ArrayList<Object>();
+        params.add(MessageUtil.getValueByColName(message, keyName));
+        List<Message> retData = query(sql.toString(), params, message.toBuilder());
+        if(null != retData && retData.size() != 0) {
+        	return retData.get(0);
+        }
+		return null;
+    }
+    
+    
+    /**
+     * 根据主键查询数据
+     * @param message
+     * @return
+     */
+    public int delete(Message message) {
+        String tableName = getTableName(message);
+        StringBuffer sql = new StringBuffer("DELETE from " + tableName +" where 1=1 ");
+        List<Object> params = Lists.newArrayList();
+        Map<Descriptors.FieldDescriptor, Object> filedMap = message.getAllFields();
+        for (Descriptors.FieldDescriptor descriptor : filedMap.keySet()){
+            Descriptors.FieldDescriptor.Type type = descriptor.getType();
+            if(DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE.equals(type) || descriptor.isRepeated() || descriptor.isMapField()){
+                    continue;
+            }
+            Object val = filedMap.get(descriptor);
+            if (val == null){
+                continue;
+            }
+            String colName = descriptor.getName();
+            sql.append(" AND ").append(colName + "= ?");
+            params.add(val);
+        }
+		return  super.delete(sql.toString() , params);
+    }
+    
 
     /**
      * 更新数据

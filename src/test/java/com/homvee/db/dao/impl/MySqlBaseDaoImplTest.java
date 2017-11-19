@@ -67,6 +67,21 @@ public class MySqlBaseDaoImplTest {
 		GRPCMsg.Teacher.Builder teacher = GRPCMsg.Teacher.newBuilder();
 		System.out.println(mySqlBaseDaoImpl.getTableName(teacher.build()));
 	}
+	
+	@Test
+	public void testGetByPrimaryKey() {
+		GRPCMsg.Teacher.Builder teacher = GRPCMsg.Teacher.newBuilder();
+		teacher.setId(1);
+		System.out.println(mySqlBaseDaoImpl.getByPrimaryKey(teacher.build()));
+	}
+	
+	@Test
+	public void testDelete() {
+		GRPCMsg.Teacher.Builder teacher = GRPCMsg.Teacher.newBuilder();
+		teacher.setId(2);
+		System.out.println(mySqlBaseDaoImpl.delete(teacher.build()));
+	}
+	
 
 	@Test
 	public void testUpdateStringObjectArray() {

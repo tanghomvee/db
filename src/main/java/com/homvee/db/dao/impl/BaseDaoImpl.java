@@ -162,6 +162,16 @@ public abstract class BaseDaoImpl implements Dao {
 
         return  -1;
     }
+    
+    /**
+     * 删除数据
+     * @param sql
+     * @param params
+     * @return 修改的行数，-1 表示错误
+     */
+    public int delete(String sql , List<?> params) {
+    	 return this.save(sql ,params);
+    }
 
     /**
      * @Document 查询数据库
