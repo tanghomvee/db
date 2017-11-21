@@ -42,7 +42,7 @@ public class DataSourceUtil {
                     if(mySqlProp == null){
                         throw new Exception("MySQL DataSource Properties is null");
                     }
-                    synchronized (DataSourceUtil.class) {
+                    synchronized (DBType.MYSQL) {
                         if (mySqlDataSource == null) {
                             mySqlDataSource = DruidDataSourceFactory.createDataSource(mySqlProp);
                         }
@@ -54,7 +54,7 @@ public class DataSourceUtil {
                     if(oracleProp == null){
                         throw new Exception("Oracle DataSource Properties is null");
                     }
-                    synchronized (DataSourceUtil.class) {
+                    synchronized (DBType.ORACLE) {
                         if (oracleDataSource == null) {
                             oracleDataSource = DruidDataSourceFactory.createDataSource(oracleProp);
                         }
