@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -87,7 +86,7 @@ public class DataSourceUtil {
         Properties properties = new Properties();
         try {
             properties.load(in);
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.error("load db config file[{}] error" , DataSourceUtil.class.getClassLoader().getResource(filePath) ,e);
         }
         return properties;
