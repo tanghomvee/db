@@ -80,7 +80,7 @@ public class DataSourceUtil {
     private static Properties  getProps(String filePath){
         InputStream in = DataSourceUtil.class.getClassLoader().getResourceAsStream(filePath);
         if (in == null){
-            LOGGER.error("db config file[{}] not found" , DataSourceUtil.class.getClassLoader().getResource(filePath));
+            LOGGER.error("db config file[{}] not found" , filePath);
             return  null;
         }
         Properties properties = new Properties();
