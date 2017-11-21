@@ -235,6 +235,7 @@
                   <exclude>**/env/</exclude>
                   <exclude>**/bin/</exclude>
                   <exclude>**/test/</exclude>
+                  <exclude>**/*.proto</exclude>
                   <exclude>**/*test.xml/</exclude>
                   <exclude>**/*.properties</exclude>
                   <exclude>**/*.cpp</exclude>

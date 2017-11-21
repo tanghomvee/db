@@ -3,6 +3,8 @@ package com.homvee.db.ds;
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.alibaba.druid.util.StringUtils;
 import com.homvee.db.enums.DBType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -15,6 +17,7 @@ import java.util.Properties;
  * The Class DataSourceUtil.
  */
 public class DataSourceUtil {
+    protected static Logger LOGGER = LogManager.getLogger(DataSourceUtil.class);
 
     private static DataSource mySqlDataSource;
     private static DataSource oracleDataSource;
@@ -76,17 +79,18 @@ public class DataSourceUtil {
     }
 
     private static Properties  getProps(String filePath){
-        InputStream in = DataSourceUtil.class.getClassLoader()
-                .getResourceAsStream(filePath);
+        InputStream in = DataSourceUtil.class.getClassLoader().getResourceAsStream(filePath);
+        if (in == null){
+            LOGGER.error("db config file[{}] not found" , DataSourceUtil.class.getClassLoader().getResource(filePath));
+            return  null;
+        }
         Properties properties = new Properties();
         try {
             properties.load(in);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("load db config file[{}] error" , DataSourceUtil.class.getClassLoader().getResource(filePath) ,e);
         }
         return properties;
     }
-
-
 }
 
