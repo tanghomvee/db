@@ -55,7 +55,7 @@ public abstract class BaseDaoImpl implements Dao {
      * @param message
      * @return 表名
      */
-    protected static  String getTableName(Message message){
+    public static  String getTableName(Message message){
         if(message == null){
             LOGGER.info("message is null!");
             return  null;
